@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <title>
+      MSA Portal
+    </title>
+    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.css" />
+    <link rel='stylesheet' type="text/css" href='/stylesheets/style.css' />
+
+    <script src="/components/jquery/dist/jquery.min.js"></script>
+    <script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/components/d3/d3.min.js"></script>
+    <script src="javascripts/index.js"></script>
+    <script src="javascripts/components/table/table.js"></script>
+  </head>
+  <body>
+    <h1>MSA Portal</h1>
+    <form action="/register" method="post" id='appendForm'>
+          <div class="form-row">
+            <div class="col-2">
+              <input class="form-control" type="date" name="date" placeholder="Date"/>
+            </div>
+            <div class="col-1">
+                <select class="custom-select" name="segment">
+                  <option value="Еда" selected >Еда</option>
+                  <option value="Движение">Движение</option>
+                  <option value="Развлечения">Развлечения</option>
+                  <option value="Путешествия">Путешествия</option>
+                  <option value="Учеба">Учеба</option>
+                  <option value="Машина">Машина</option>
+                  <option value="Спорт">Спорт</option>
+                  <option value="Жилье">Жилье</option>
+                  <option value="Комиссии">Комиссии</option>
+                  <option value="Одежда">Одежда</option>
+                  <option value="Подарки">Подарки</option>
+                  <option value="Телефон">Телефон</option>
+                  <option value="Покупки">Покупки</option>
+                  <option value="Благотв">Благотв</option>
+                </select>
+            </div>
+            <div class="col-2">
+              <input class="form-control" type="text" name="desc" placeholder="Description"/>
+            </div>
+            <div class="col-1">
+              <input class="form-control" type="number" name="income" placeholder="Income"/>
+            </div>
+            <div class="col-1">
+              <input class="form-control" type="number" name="outcome" placeholder="Outcome"/>
+            </div>
+            <div class="col-1">
+              <select class="custom-select" name="cur">
+                <option value="RUR" selected >RUR</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+            </div>
+            <div class="col-1">
+              <select class="custom-select" name="account">
+                <option value="TKFF" selected >TKFF</option>
+                <option value="SBER">SBER</option>
+                <option value="PROD">PROD</option>
+                <option value="NAL">NAL</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="DEPS">DEPS</option>
+                <option value="SDPS">SDPS</option>
+                <option value="DEBT">DEBT</option>
+              </select>
+            </div>
+            <div class="col-1">
+              <input class='form-control btn btn-primary' type="submit" value="Write" />
+            </div>
+          </div>
+    </form>
+    <div id='tableMainData'></div>
+  </body>
+</html>
