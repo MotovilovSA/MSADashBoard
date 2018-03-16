@@ -7,7 +7,7 @@ let app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.set('port', 3000)
+app.set('port', 3050)
 app.set('views', path.join(__dirname, 'views'));
 app.engine('ejs', require('ejs-locals'));
 app.set('view engine', 'ejs');
@@ -22,7 +22,9 @@ app.get("/", function (req, res) {
 app.get("/allValues", function (req, res) {
 
     let data = {
-        apiAction: 'get'
+        apiAction: 'get',
+        rowFrom: req.query.rowFrom,
+        rowTo: req.query.rowTo
     };
 
     sheets.sheetsAPI(data, function (values) {
@@ -39,8 +41,10 @@ app.post("/appendString", function (req, res) {
     };
 
     data.values = req.body;
-    sheets.sheetsAPI(data);
-    res.end();
+    sheets.sheetsAPI(data, function (values){
+        res.send(values);
+    });
+
 });
 
 app.post("/updateString", function (req, res) {
@@ -60,5 +64,5 @@ app.post("/updateString", function (req, res) {
 });
 
 http.createServer(app).listen(app.get('port'), function () {
-    console.log('server listeninig on port 3000');
-})
+    console.log('server listeninig on port 3050');
+});

@@ -1,14 +1,12 @@
 $(document).ready(function () {
 
+    let table;
+
     // getting data from google sheet
-    $.ajax({
-        url: "/allValues",
-        type: "GET",
-        contentType: "application/json"
-    }).done(function (data) {
+    getRows(1, 10000, function (data) {
         let container = 'tableMainData'
-        let table = new Table(data.values, container);
-        table.render()
+        table = new Table(data.values, container)
+        table.render()        
     });
 
     $("#appendForm").on('submit', function (event) {
@@ -44,8 +42,25 @@ $(document).ready(function () {
             data: JSON.stringify(values),
             datatType: "json",
             contentType: "application/json"
-        }).done(function () {
-          console.log('запрос ушел!')  
+        }).done(function (addedValues) {
+
+            table.addRow(addedValues);
+            
         });
     });
 });
+
+
+function getRows(rowFrom, rowTo, callback) {
+
+    // getting data from google sheet
+    $.ajax({
+        url: `/allValues/?rowFrom=${rowFrom}&rowTo=${rowTo}`,
+        type: "GET",
+        datatType: "json",
+        contentType: "application/json"
+    }).done(function (data) {
+        callback(data);
+    });
+
+}

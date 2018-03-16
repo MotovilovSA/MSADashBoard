@@ -1,6 +1,6 @@
 var google = require('googleapis');
 
-exports.listMajors = function (auth, values) {
+exports.listMajors = function (auth, values, callback) {
 
     var sheets = google.sheets('v4');
     sheets.spreadsheets.values.append(
@@ -15,6 +15,7 @@ exports.listMajors = function (auth, values) {
                 values: [values.values]                
             }
         }, function (err, response) {
-            console.log(response.updates.updatedData.values);
+            console.log(response);
+            callback(response.updates.updatedData.values);
         })
 }

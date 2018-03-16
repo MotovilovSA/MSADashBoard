@@ -7,7 +7,7 @@
             this.container = container;
             }
 
-            _dataTransformer(data){
+            _dataTransformer(data, slice){
 
                   for(let i = 0; i < data.length; i++){
                         data[i].unshift(i + 1);
@@ -15,7 +15,7 @@
                         data[i].push('saveButton');
                   }
 
-                  let dataSliced = data.slice(-10);
+                  let dataSliced = data.slice(slice);
 
                   return dataSliced;
 
@@ -24,6 +24,7 @@
             _removeEditable(elem){
 
                   $('td', $(elem).parent().parent())
+                        .not($('td', $(elem).parent()))
                         .css('background-color', 'white')
                         .attr('contentEditable', false)
                   ;
@@ -33,17 +34,16 @@
             _editClickHandler(elem){
                   this._removeEditable(elem);
 
-                  // $(elem).parent()
-                  //       .addClass("form-row")
-                  //       // .css('display', 'inline')
-
                   $('td', $(elem).parent())
                         .css('background-color', '#F2F4F4')
                         .attr('contentEditable', true);
             }
 
             _saveClickHandler(elem){
-                  this._removeEditable(elem);
+
+                  let _this = this;
+
+                  _this._removeEditable(elem);
 
                   let data = {};
 
@@ -73,18 +73,81 @@
                         datatType: "json",
                         contentType: "application/json"
                   }).done(function () {
-                        console.log('запрос ушел!')
+                        let row = $(elem).parent();
+                        _this._updateRowAnimation($('td', row));
                   });
             }
 
-            render () {
+            _updateRowAnimation(row){
+                  row.not('.btn')
+                  .css('background-color', "#007bff")   
+                  .animate({
+                        backgroundColor: "white"
+                  }, 1200)
+            }
+
+            addRow(addedValues){
 
                   let _this = this;
-                  let data = this._dataTransformer(this.data);
+                  
+                  $('tr:first', `#${this.container}`).remove();
 
+                  //preparing data for inserting 
+                  let data = this._dataTransformer(addedValues, 0);
+ 
+                  // changing rowNo on actual
+                  let nextRowNum = +$('tr:last td:first' , `#${this.container}`).html() + 1;
+                  data[0].shift();
+                  data[0].unshift(nextRowNum);
 
+                  // generating html for new row
+                  let cells = data[0].map(function (d, i) {
 
-                  let body = d3.select('#tableMainData');
+                        let innerHTML;
+
+                        if (i == 0) {
+                              innerHTML = `<td class="rowNo">${d}</td>`;
+                        } else if (d == 'editButton') {
+                              innerHTML = '<td class="btn"><img src="/images/editButton.png" alt="editButton"></td>';
+                        } else if (d == 'saveButton') {
+                              innerHTML = '<td class="btn"><img src="/images/saveButton.png" alt="saveButton"></td>';
+                        } else {
+                              innerHTML = `<td>${d}</td>`;
+                        }
+
+                        return innerHTML;
+                  })
+                  
+                  let cellsHTML = `<tr>${cells.join('')}</tr>`;
+
+                  // inserting new row to a table
+                  $(`#${this.container} tr:last`).after(cellsHTML);
+
+                  // adding event listeners for new row
+                  let row = $(`#${this.container} tr:last td`);
+                  row.on('click', function (d) {
+
+                        let altAttrValue = $('img', this).attr("alt");
+
+                        if (altAttrValue == 'editButton') {
+                              return _this._editClickHandler(this);
+                        } else if (altAttrValue == 'saveButton') {
+                              return _this._saveClickHandler(this);
+                        }
+                        else {
+                              return _this._removeEditable(this);
+                        }
+                  });
+
+                  this._updateRowAnimation(row);
+            }
+
+            render () {
+                  let _this = this;
+                  let data = this._dataTransformer(this.data, -10);
+                  // let data = this._dataTransformer(this.data, -100);
+
+                  let body = d3.select(`#${this.container}`);
 
                   let table = body
                         .append('table')
@@ -121,9 +184,9 @@
                               let innerHTML;
 
                               if(d == 'editButton'){
-                                    innerHTML = '<img src="/images/editButton.png">';
+                                    innerHTML = '<img src="/images/editButton.png" alt="editButton">';
                               } else if (d == 'saveButton'){
-                                    innerHTML = '<img src="/images/saveButton.png">';
+                                    innerHTML = '<img src="/images/saveButton.png" alt="saveButton">';
                               } else {
                                     innerHTML = d;
                               }
@@ -135,6 +198,9 @@
                                     return _this._editClickHandler(this);
                               } else if (d == 'saveButton') {
                                     return _this._saveClickHandler(this);
+                              } 
+                              else {
+                                    return _this._removeEditable(this);
                               }
                         })
                   ;
